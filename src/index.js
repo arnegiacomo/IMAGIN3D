@@ -1,9 +1,11 @@
 "use strict";
 
-import * as THREE from "./three.module.js";
+import * as THREE from "../libs/three.module.js";
+import {VRButton} from "../libs/webxr/VRButton.js";
 
 import { getHeightmapData } from "./utils.js";
-import TextureSplattingMaterial from "./TextureSplattingMaterial.js";
+import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
+import { OrbitControls } from "../libs/controls/OrbitControls.js";
 
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("canvas"),
@@ -13,14 +15,20 @@ const renderer = new THREE.WebGLRenderer({
 const white = new THREE.Color(THREE.Color.NAMES.white);
 renderer.setClearColor(white, 1.0);
 
+renderer.xr.enabled = true;
+
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+const controls = new OrbitControls( camera, renderer.domElement );
+
 camera.position.z += 10;
 camera.position.x += 10;
 camera.position.y += 10;
 
 camera.lookAt(0, 0, 0);
+
+controls.update();
 
 scene.add(camera);
 
@@ -52,9 +60,9 @@ terrainImage.onload = () => {
 
   const geometry = new TerrainGeometry(20, 128, 5, terrainImage);
 
-  const grass = new THREE.TextureLoader().load('images/grass.png');
-  const rock = new THREE.TextureLoader().load('images/rock.png');
-  const alphaMap = new THREE.TextureLoader().load('images/terrain.png');
+  const grass = new THREE.TextureLoader().load('../public/assets/images/grass.png');
+  const rock = new THREE.TextureLoader().load('../public/assets/images/rock.png');
+  const alphaMap = new THREE.TextureLoader().load('../public/assets/images/terrain.png');
 
   grass.wrapS = THREE.RepeatWrapping;
   grass.wrapT = THREE.RepeatWrapping;
@@ -78,7 +86,7 @@ terrainImage.onload = () => {
 
 };
 
-terrainImage.src = 'images/terrain.png';
+terrainImage.src = '../public/assets/images/terrain.png';
 
 
 function updateRendererSize() {
@@ -97,7 +105,11 @@ function updateRendererSize() {
 
 function loop() {
   updateRendererSize();
+
+  controls.update();
+
   renderer.render(scene, camera);
 }
 
+document.body.append(VRButton.createButton(renderer))
 renderer.setAnimationLoop(loop);
