@@ -7,8 +7,9 @@ import { getHeightmapData } from "./utils.js";
 import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
 import { OrbitControls } from "../libs/controls/OrbitControls.js";
 
+const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector("canvas"),
+  canvas: canvas,
   antialias: true,
 });
 
@@ -31,6 +32,10 @@ camera.lookAt(0, 0, 0);
 controls.update();
 
 scene.add(camera);
+
+const loader = new THREE.TextureLoader();
+const bgTexture = loader.load('../public/assets/images/skybox.png');
+scene.background = bgTexture;
 
 const axesHelper = new THREE.AxesHelper(1);
 scene.add(axesHelper);
@@ -105,6 +110,19 @@ function updateRendererSize() {
 
 function loop() {
   updateRendererSize();
+
+  // Set the repeat and offset properties of the background texture
+  // to keep the image's aspect correct.
+  // Note the image may not have loaded yet.
+  const canvasAspect = canvas.clientWidth / canvas.clientHeight;
+  const imageAspect = bgTexture.image ? bgTexture.image.width / bgTexture.image.height : 1;
+  const aspect = imageAspect / canvasAspect;
+
+  bgTexture.offset.x = aspect > 1 ? (1 - 1 / aspect) / 2 : 0;
+  bgTexture.repeat.x = aspect > 1 ? 1 / aspect : 1;
+
+  bgTexture.offset.y = aspect > 1 ? 0 : (1 - aspect) / 2;
+  bgTexture.repeat.y = aspect > 1 ? 1 : aspect;
 
   controls.update();
 
