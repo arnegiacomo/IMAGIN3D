@@ -4,7 +4,7 @@ import * as THREE from "../libs/three.module.js";
 import {VRButton} from "../libs/webxr/VRButton.js";
 
 import { getHeightmapData } from "./utils.js";
-import TextureSplattingMaterial from "./TextureSplattingMaterial.js";
+import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
 
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("canvas"),
