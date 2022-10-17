@@ -1,6 +1,7 @@
 "use strict";
 
 import * as THREE from "../libs/three.module.js";
+import {VRButton} from "../libs/webxr/VRButton.js";
 
 import { getHeightmapData } from "./utils.js";
 import TextureSplattingMaterial from "./TextureSplattingMaterial.js";
@@ -12,6 +13,8 @@ const renderer = new THREE.WebGLRenderer({
 
 const white = new THREE.Color(THREE.Color.NAMES.white);
 renderer.setClearColor(white, 1.0);
+
+renderer.xr.enabled = true;
 
 const scene = new THREE.Scene();
 
@@ -100,4 +103,5 @@ function loop() {
   renderer.render(scene, camera);
 }
 
+document.body.append(VRButton.createButton(renderer))
 renderer.setAnimationLoop(loop);
