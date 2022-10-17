@@ -1,6 +1,6 @@
 "use strict";
 
-import * as THREE from "./three.module.js";
+import * as THREE from "../libs/three.module.js";
 
 import { getHeightmapData } from "./utils.js";
 import TextureSplattingMaterial from "./TextureSplattingMaterial.js";
@@ -52,9 +52,9 @@ terrainImage.onload = () => {
 
   const geometry = new TerrainGeometry(20, 128, 5, terrainImage);
 
-  const grass = new THREE.TextureLoader().load('images/grass.png');
-  const rock = new THREE.TextureLoader().load('images/rock.png');
-  const alphaMap = new THREE.TextureLoader().load('images/terrain.png');
+  const grass = new THREE.TextureLoader().load('../public/assets/images/grass.png');
+  const rock = new THREE.TextureLoader().load('../public/assets/images/rock.png');
+  const alphaMap = new THREE.TextureLoader().load('../public/assets/images/terrain.png');
 
   grass.wrapS = THREE.RepeatWrapping;
   grass.wrapT = THREE.RepeatWrapping;
@@ -78,7 +78,7 @@ terrainImage.onload = () => {
 
 };
 
-terrainImage.src = 'images/terrain.png';
+terrainImage.src = '../public/assets/images/terrain.png';
 
 
 function updateRendererSize() {
