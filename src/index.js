@@ -5,6 +5,7 @@ import {VRButton} from "../libs/webxr/VRButton.js";
 
 import { getHeightmapData } from "./utils.js";
 import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
+import { OrbitControls } from "../libs/controls/OrbitControls.js";
 
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("canvas"),
@@ -19,11 +20,15 @@ renderer.xr.enabled = true;
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+const controls = new OrbitControls( camera, renderer.domElement );
+
 camera.position.z += 10;
 camera.position.x += 10;
 camera.position.y += 10;
 
 camera.lookAt(0, 0, 0);
+
+controls.update();
 
 scene.add(camera);
 
@@ -100,6 +105,9 @@ function updateRendererSize() {
 
 function loop() {
   updateRendererSize();
+
+  controls.update();
+
   renderer.render(scene, camera);
 }
 
