@@ -97,8 +97,8 @@ makeTextPanel();
 function makeTextPanel() {
 
   const container = new ThreeMeshUI.Block( {
-    width: 1.2,
-    height: 0.5,
+    width: 2.4,
+    height: 1.0,
     padding: 0.05,
     justifyContent: 'center',
     textAlign: 'left',
@@ -106,7 +106,7 @@ function makeTextPanel() {
     fontTexture: '../assets/three-mesh-ui/Roboto-msdf.png'
   } );
 
-  container.position.set( 0, 1, -2.8 );
+  container.position.set( 0, 4, -2.8 );
   container.rotation.x = -0.55;
   scene.add( container );
 
