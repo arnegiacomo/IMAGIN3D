@@ -168,9 +168,6 @@ const fragmentShader = (length) => {
   texture2D(colorMaps[${i}], colorMapsUvs[${i}]),
   texture2D(alphaMaps[${i - 1}], vUv).r
 )`;
-
-      console.log(expression);
-
   }
 
   return glsl`
