@@ -4,6 +4,7 @@ import * as THREE from "../libs/three.module.js";
 import ThreeMeshUI from '../libs/three-mesh-ui.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { VRButton } from "../libs/webxr/VRButton.js";
+import {OBJLoader} from "../libs/OBJLoader.js";
 
 import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
 import TerrainGeometry from "./geometry/TerrainGeometry.js";
@@ -97,6 +98,35 @@ makeTextPanel();
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
+
+// instantiate a loader
+const loader = new OBJLoader();
+
+// load a resource
+loader.load(
+    // resource URL
+    '../assets/models/tree.obj',
+    // called when resource is loaded
+    function ( object ) {
+
+      object.position.set( 0.5, 3.5, 0 );
+      scene.add( object );
+
+    },
+    // called when loading is in progresses
+    function ( xhr ) {
+
+      console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+    },
+    // called when loading has errors
+    function ( error ) {
+
+      console.log( 'An error happened' + error);
+
+    }
+);
+
 
 
 function makeTextPanel() {
