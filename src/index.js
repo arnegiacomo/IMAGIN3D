@@ -9,6 +9,7 @@ import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
 import TerrainGeometry from "./geometry/TerrainGeometry.js";
 import { OrbitControls } from "../libs/controls/OrbitControls.js";
 import SkyBox from "./objects/SkyBox.js";
+import LightSphere from "./objects/LightSphere.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -93,6 +94,10 @@ terrainImage.src = '../assets/images/terrain.png';
 // TODO: VR gui using https://github.com/felixmariotto/three-mesh-ui
 
 makeTextPanel();
+scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
+scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
+scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
+
 
 function makeTextPanel() {
 
