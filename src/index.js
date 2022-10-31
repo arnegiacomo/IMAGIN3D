@@ -11,6 +11,7 @@ import TerrainGeometry from "./geometry/TerrainGeometry.js";
 import { OrbitControls } from "../libs/controls/OrbitControls.js";
 import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
+import VRControllers from "./ui/VRControllers.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -27,6 +28,7 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 const controls = new OrbitControls( camera, renderer.domElement );
+const vrcontrols = new VRControllers(scene, renderer);
 
 camera.position.z += 10;
 camera.position.x += 10;
@@ -179,6 +181,7 @@ function loop() {
   updateRendererSize();
 
   controls.update();
+  vrcontrols.update();
 
   ThreeMeshUI.update();
 
