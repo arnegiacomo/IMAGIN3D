@@ -27,7 +27,6 @@ export default class VRControls {
             this.remove( this.children[ 0 ] );
 
         } );
-        scene.add( this.controller1 );
 
         this.controller2 = renderer.xr.getController( 1 );
         this.controller2.addEventListener( 'selectstart', onSelectStart );
@@ -42,7 +41,6 @@ export default class VRControls {
             this.remove( this.children[ 0 ] );
 
         } );
-        scene.add( this.controller2 );
 
         // The XRControllerModelFactory will automatically fetch controller models
         // that match what the user is holding as closely as possible. The models
@@ -53,17 +51,17 @@ export default class VRControls {
 
         this.controllerGrip1 = renderer.xr.getControllerGrip( 0 );
         this.controllerGrip1.add( controllerModelFactory.createControllerModel( this.controllerGrip1 ) );
-        scene.add( this.controllerGrip1 );
 
         this.controllerGrip2 = renderer.xr.getControllerGrip( 1 );
         this.controllerGrip2.add( controllerModelFactory.createControllerModel( this.controllerGrip2 ) );
-        scene.add( this.controllerGrip2 );
 
         // Dolly and camera for VR movement
         this.dolly = new THREE.Object3D();
         this.dolly.add(this.camera);
         scene.add(this.dolly);
 
+        this.dolly.add(this.controller1);
+        this.dolly.add(this.controller2);
         this.dolly.add(this.controllerGrip1);
         this.dolly.add(this.controllerGrip2);
 
