@@ -3,9 +3,17 @@
 import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
 
-export default class VRControllers{
+export default class VRControls {
 
-    constructor(scene, renderer) {
+    constructor(scene, renderer, camera) {
+        this.scene = scene;
+        this.renderer = renderer;
+        this.camera = camera;
+
+        // Enable VR
+        renderer.xr.enabled = true;
+
+        // Get controllers
         this.controller1 = renderer.xr.getController( 0 );
         this.controller1.addEventListener( 'selectstart', onSelectStart );
         this.controller1.addEventListener( 'selectend', onSelectEnd );
@@ -51,11 +59,31 @@ export default class VRControllers{
         this.controllerGrip2.add( controllerModelFactory.createControllerModel( this.controllerGrip2 ) );
         scene.add( this.controllerGrip2 );
 
+        // Dolly and camera for VR movement
+        this.dolly = new THREE.Object3D();
+        this.dolly.add(this.camera);
+        scene.add(this.dolly);
+
+        this.dolly.add(this.controllerGrip1);
+        this.dolly.add(this.controllerGrip2);
+
     }
 
-    update() {
-        handleController( this.controller1 );
-        handleController( this.controller2 );
+    update(dt) {
+        this.handleController( this.controller1 , dt);
+
+    }
+
+    handleController( controller , dt ) {
+
+        if ( controller.userData.isSelecting ) {
+            const speed = 2;
+            const quaternion = this.dolly.quaternion.clone();
+            this.camera.getWorldQuaternion(this.dolly.quaternion);
+            this.dolly.translateZ(-dt * speed);
+            this.dolly.position.y = 0;
+            this.dolly.quaternion.copy( quaternion );
+        }
 
     }
 }
@@ -81,14 +109,6 @@ function buildController( data ) {
             geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
             material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
             return new THREE.Mesh( geometry, material );
-
-    }
-
-}
-
-function handleController( controller ) {
-
-    if ( controller.userData.isSelecting ) {
 
     }
 

@@ -11,7 +11,7 @@ import TerrainGeometry from "./geometry/TerrainGeometry.js";
 import { OrbitControls } from "../libs/controls/OrbitControls.js";
 import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
-import VRControllers from "./ui/VRControllers.js";
+import VRControllers from "./ui/VRControls.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -22,13 +22,10 @@ const renderer = new THREE.WebGLRenderer({
 const white = new THREE.Color(THREE.Color.NAMES.white);
 renderer.setClearColor(white, 1.0);
 
-renderer.xr.enabled = true;
-
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 const controls = new OrbitControls( camera, renderer.domElement );
-const vrcontrols = new VRControllers(scene, renderer);
 
 camera.position.z += 10;
 camera.position.x += 10;
@@ -39,6 +36,7 @@ camera.lookAt(0, 0, 0);
 controls.update();
 
 scene.add(camera);
+const vrcontrols = new VRControllers(scene, renderer, camera);
 
 const skybox = new SkyBox();
 scene.background = skybox.images;
@@ -177,11 +175,18 @@ function updateRendererSize() {
   }
 }
 
+const clock = new THREE.Clock;
+clock.start();
+
 function loop() {
+
   updateRendererSize();
 
-  controls.update();
-  vrcontrols.update();
+  if(!renderer.xr.isPresenting) {
+    controls.update();
+  } else {
+    vrcontrols.update(clock.getDelta());
+  }
 
   ThreeMeshUI.update();
 
