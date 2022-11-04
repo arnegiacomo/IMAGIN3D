@@ -8,10 +8,9 @@ import {OBJLoader} from "../libs/OBJLoader.js";
 
 import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
 import TerrainGeometry from "./geometry/TerrainGeometry.js";
-import { OrbitControls } from "../libs/controls/OrbitControls.js";
 import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
-import VRControllers from "./ui/VRControls.js";
+import Controls from "./ui/Controls.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -24,20 +23,10 @@ renderer.setClearColor(white, 1.0);
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-const controls = new OrbitControls( camera, renderer.domElement );
+const controls = new Controls(scene, renderer);
+const camera = controls.camera;
 
-camera.position.z += 10;
-camera.position.x += 10;
-camera.position.y += 10;
-
-camera.lookAt(0, 0, 0);
-
-controls.update();
-
-scene.add(camera);
-const vrcontrols = new VRControllers(scene, renderer, camera);
-
+// TODO: Move scene creation and management elsewhere
 const skybox = new SkyBox();
 scene.background = skybox.images;
 
@@ -99,6 +88,7 @@ scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
 
+// TODO: Mobve object/model loading elsewhere
 // instantiate a loader
 const loader = new OBJLoader();
 
@@ -128,7 +118,7 @@ loader.load(
 );
 
 
-
+// TODO: move ui creation/management elsewhere
 function makeTextPanel() {
 
   const container = new ThreeMeshUI.Block( {
@@ -182,11 +172,7 @@ function loop() {
 
   updateRendererSize();
 
-  if(!renderer.xr.isPresenting) {
-    controls.update();
-  } else {
-    vrcontrols.update(clock.getDelta());
-  }
+  controls.update(clock.getDelta());
 
   ThreeMeshUI.update();
 

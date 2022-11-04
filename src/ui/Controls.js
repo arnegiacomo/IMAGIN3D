@@ -2,13 +2,29 @@
 
 import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
+import { OrbitControls } from "../../libs/controls/OrbitControls.js";
 
-export default class VRControls {
+export default class Controls {
 
-    constructor(scene, renderer, camera) {
+    constructor(scene, renderer) {
         this.scene = scene;
         this.renderer = renderer;
-        this.camera = camera;
+
+        // Create camera
+        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        // Create mousecontrols
+        this.controls = new OrbitControls( this.camera, renderer.domElement );
+
+        // Configure camera
+        this.camera.position.z += 10;
+        this.camera.position.x += 10;
+        this.camera.position.y += 10;
+
+        this.camera.lookAt(0, 0, 0);
+
+        this.controls.update();
+
+        this.scene.add(this.camera);
 
         // Enable VR
         renderer.xr.enabled = true;
@@ -68,7 +84,13 @@ export default class VRControls {
     }
 
     update(dt) {
-        this.handleController( this.controller1 , dt);
+
+        if(!this.renderer.xr.isPresenting) {
+            this.controls.update();
+        } else {
+            this.handleController( this.controller1 , dt);
+        }
+
 
     }
 
