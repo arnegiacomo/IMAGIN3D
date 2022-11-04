@@ -4,6 +4,7 @@ import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
 import { OrbitControls } from "../../libs/controls/OrbitControls.js";
 
+// This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
 
     constructor(scene, renderer) {

@@ -84,11 +84,13 @@ terrainImage.src = '../assets/images/terrain.png';
 // TODO: VR gui using https://github.com/felixmariotto/three-mesh-ui
 
 makeTextPanel();
+
+// TODO: there three can be moved elsewhere
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
 
-// TODO: Mobve object/model loading elsewhere
+// TODO: Move object/model loading elsewhere
 // instantiate a loader
 const loader = new OBJLoader();
 
