@@ -1,8 +1,6 @@
 "use strict";
 
 import * as THREE from "../libs/three.module.js";
-import ThreeMeshUI from '../libs/three-mesh-ui.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
 import { VRButton } from "../libs/webxr/VRButton.js";
 import {OBJLoader} from "../libs/OBJLoader.js";
 
@@ -11,6 +9,7 @@ import TerrainGeometry from "./geometry/TerrainGeometry.js";
 import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
 import Controls from "./ui/Controls.js";
+import GUI from './ui/GUI.js'
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -25,6 +24,7 @@ const scene = new THREE.Scene();
 
 const controls = new Controls(scene, renderer);
 const camera = controls.camera;
+const gui = new GUI(scene);
 
 // TODO: Move scene creation and management elsewhere
 const skybox = new SkyBox();
@@ -68,22 +68,9 @@ terrainImage.onload = () => {
 
   scene.add(mesh);
 
-  // TODO: Non-VR gui using https://sbcode.net/threejs/dat-gui/
-
-  // const gui = new GUI()
-  // const meshFolder = gui.addFolder('Mesh')
-  // meshFolder.add(mesh.rotation, 'x', 0, Math.PI * 2)
-  // meshFolder.add(mesh.rotation, 'y', 0, Math.PI * 2)
-  // meshFolder.add(mesh.rotation, 'z', 0, Math.PI * 2)
-  // meshFolder.open()
-
 };
 
 terrainImage.src = '../assets/images/terrain.png';
-
-// TODO: VR gui using https://github.com/felixmariotto/three-mesh-ui
-
-makeTextPanel();
 
 // TODO: there three can be moved elsewhere
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
@@ -119,40 +106,6 @@ loader.load(
     }
 );
 
-
-// TODO: move ui creation/management elsewhere
-function makeTextPanel() {
-
-  const container = new ThreeMeshUI.Block( {
-    width: 2.4,
-    height: 1.0,
-    padding: 0.05,
-    justifyContent: 'center',
-    textAlign: 'left',
-    fontFamily: '../assets/three-mesh-ui/Roboto-msdf.json',
-    fontTexture: '../assets/three-mesh-ui/Roboto-msdf.png'
-  } );
-
-  container.position.set( 0, 4, -2.8 );
-  container.rotation.x = -0.55;
-  scene.add( container );
-
-  //
-
-  container.add(
-      new ThreeMeshUI.Text( {
-        content: 'This library supports line-break-friendly-characters,',
-        fontSize: 0.055
-      } ),
-
-      new ThreeMeshUI.Text( {
-        content: ' As well as multi-font-size lines with consistent vertical spacing.',
-        fontSize: 0.08
-      } )
-  );
-
-}
-
 function updateRendererSize() {
   const { x: currentWidth, y: currentHeight } = renderer.getSize(
     new THREE.Vector2()
@@ -175,9 +128,7 @@ function loop() {
   updateRendererSize();
 
   controls.update(clock.getDelta());
-
-  ThreeMeshUI.update();
-
+  gui.update();
   renderer.render(scene, camera);
 }
 
