@@ -89,16 +89,30 @@ export default class Controls {
         if(!this.renderer.xr.isPresenting) {
             this.controls.update();
         } else {
-            this.handleController( this.controller1 , dt);
+            this.handleController1(dt);
+            this.handleController2(dt);
         }
 
 
     }
 
-    handleController( controller , dt ) {
+    handleController1( dt ) {
 
-        if ( controller.userData.isSelecting ) {
+        if ( this.controller1.userData.isSelecting ) {
             const speed = 2;
+            const quaternion = this.dolly.quaternion.clone();
+            this.camera.getWorldQuaternion(this.dolly.quaternion);
+            this.dolly.translateZ(-dt * speed);
+            this.dolly.position.y = 0;
+            this.dolly.quaternion.copy( quaternion );
+        }
+
+    }
+
+    handleController2( dt ) {
+
+        if ( this.controller2.userData.isSelecting ) {
+            const speed = -2;
             const quaternion = this.dolly.quaternion.clone();
             this.camera.getWorldQuaternion(this.dolly.quaternion);
             this.dolly.translateZ(-dt * speed);

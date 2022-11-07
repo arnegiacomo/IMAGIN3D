@@ -129,6 +129,7 @@ function loop() {
 
   controls.update(clock.getDelta());
   gui.update();
+
   renderer.render(scene, camera);
 }
 
