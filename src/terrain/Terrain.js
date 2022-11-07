@@ -38,6 +38,7 @@ export default class Terrain {
             });
 
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.isTerrain = true;
 
             scene.add(this.mesh);
             this.loaded = true;
@@ -46,10 +47,9 @@ export default class Terrain {
     }
 
     update(dt) {
-        if (!this.loaded) return;
 
-            this.mesh.geometry.attributes.position.setY(0, this.mesh.geometry.attributes.position.getY(0) + dt);
-            this.mesh.geometry.attributes.position.needsUpdate = true;
+
     }
+
 }
 

@@ -3,6 +3,7 @@
 import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
 import { OrbitControls } from "../../libs/controls/OrbitControls.js";
+import {Vector3} from "../../libs/three.module.js";
 
 // This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
@@ -36,7 +37,8 @@ export default class Controls {
         this.controller1.addEventListener( 'selectend', onSelectEnd );
         this.controller1.addEventListener( 'connected', function ( event ) {
 
-            this.add( buildController( event.data ) );
+            this.ray = buildController( event.data );
+            this.add( this.ray );
 
         } );
         this.controller1.addEventListener( 'disconnected', function () {
@@ -50,7 +52,8 @@ export default class Controls {
         this.controller2.addEventListener( 'selectend', onSelectEnd );
         this.controller2.addEventListener( 'connected', function ( event ) {
 
-            this.add( buildController( event.data ) );
+            this.ray = buildController( event.data );
+            this.add( this.ray );
 
         } );
         this.controller2.addEventListener( 'disconnected', function () {
@@ -58,6 +61,10 @@ export default class Controls {
             this.remove( this.children[ 0 ] );
 
         } );
+
+
+        // Create raycaster for picking
+        this.raycaster = new THREE.Raycaster();
 
         // The XRControllerModelFactory will automatically fetch controller models
         // that match what the user is holding as closely as possible. The models
@@ -91,6 +98,31 @@ export default class Controls {
         } else {
             this.handleController1(dt);
             this.handleController2(dt);
+
+            const direction = new THREE.Vector3();
+            this.controller1.ray.getWorldDirection(direction);
+            direction.multiply(new Vector3(-1, -1, -1))
+            const position = new THREE.Vector3();
+            this.controller1.ray.getWorldPosition(position)
+            this.raycaster.set( position, direction);
+
+            const intersects = this.raycaster.intersectObjects( this.scene.children );
+
+            for ( let i = 0; i < intersects.length; i ++ ) {
+
+                const obj = intersects[i].object;
+                if(obj instanceof THREE.Mesh) {
+                    if(intersects[i].object.isTerrain) {
+                        obj.updateMatrixWorld();
+                        const point = intersects[i].uv;
+                        const idx = calculateindex(point.x, point.y);
+                        console.log(point); // temp
+                        obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
+                        obj.geometry.attributes.position.needsUpdate = true;
+                    }
+
+                }
+            }
         }
 
 
@@ -159,4 +191,12 @@ function onSelectEnd() {
 
     this.userData.isSelecting = false;
 
+}
+
+function calculateindex(x, y) {
+    const xval = Math.round(x * 128);
+    let yval = Math.round((1-y) * 128 * 128);
+    const divs = Math.floor(yval / 128);
+    yval = divs * 128;
+    return xval + yval;
 }
