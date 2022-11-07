@@ -36,6 +36,8 @@ export default class Controls {
         this.controller1 = renderer.xr.getController( 0 );
         this.controller1.addEventListener( 'selectstart', onSelectStart );
         this.controller1.addEventListener( 'selectend', onSelectEnd );
+        this.controller1.addEventListener( 'squeezestart', onSqueezeStart );
+        this.controller1.addEventListener( 'squeezeend', onSqueezeEnd );
         this.controller1.addEventListener( 'connected', function ( event ) {
 
             this.ray = buildController( event.data );
@@ -51,6 +53,8 @@ export default class Controls {
         this.controller2 = renderer.xr.getController( 1 );
         this.controller2.addEventListener( 'selectstart', onSelectStart );
         this.controller2.addEventListener( 'selectend', onSelectEnd );
+        this.controller2.addEventListener( 'squeezestart', onSqueezeStart );
+        this.controller2.addEventListener( 'squeezeend', onSqueezeEnd );
         this.controller2.addEventListener( 'connected', function ( event ) {
 
             this.ray = buildController( event.data );
@@ -153,6 +157,10 @@ export default class Controls {
             this.dolly.quaternion.copy( quaternion );
         }
 
+        if (this.controller1.userData.isSqueezing) {
+            console.log("Controller 1 is squeezing!");
+        }
+
     }
 
     handleController2( dt ) {
@@ -164,6 +172,10 @@ export default class Controls {
             this.dolly.translateZ(-dt * speed);
             this.dolly.position.y = 0;
             this.dolly.quaternion.copy( quaternion );
+        }
+
+        if (this.controller2.userData.isSqueezing) {
+            console.log("Controller 2 is squeezing!");
         }
 
     }
@@ -207,3 +219,14 @@ function onSelectEnd() {
 
 }
 
+function onSqueezeStart() {
+
+    this.userData.isSqueezing = true;
+
+}
+
+function onSqueezeEnd() {
+
+    this.userData.isSqueezing = false;
+
+}
