@@ -39,6 +39,7 @@ export default class Terrain {
 
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.isTerrain = true;
+            this.mesh.size = this.size;
 
             scene.add(this.mesh);
             this.loaded = true;

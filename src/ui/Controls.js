@@ -4,6 +4,7 @@ import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
 import { OrbitControls } from "../../libs/controls/OrbitControls.js";
 import {Vector3} from "../../libs/three.module.js";
+import {calculateVertexIndex} from "../utils.js";
 
 // This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
@@ -115,8 +116,8 @@ export default class Controls {
                     if(intersects[i].object.isTerrain) {
                         obj.updateMatrixWorld();
                         const point = intersects[i].uv;
-                        const idx = calculateindex(point.x, point.y);
-                        console.log(point); // temp
+                        const idx = calculateVertexIndex(point.x, point.y, obj.size);
+                        console.log(obj.size);
                         obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
                         obj.geometry.attributes.position.needsUpdate = true;
                     }
@@ -193,10 +194,3 @@ function onSelectEnd() {
 
 }
 
-function calculateindex(x, y) {
-    const xval = Math.round(x * 128);
-    let yval = Math.round((1-y) * 128 * 128);
-    const divs = Math.floor(yval / 128);
-    yval = divs * 128;
-    return xval + yval;
-}

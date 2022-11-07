@@ -9,6 +9,8 @@ import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
 import Controls from "./ui/Controls.js";
 import GUI from './ui/GUI.js'
+import {updateRendererSize} from "./utils.js";
+
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -71,26 +73,14 @@ loader.load(
     }
 );
 
-function updateRendererSize() {
-    const {x: currentWidth, y: currentHeight} = renderer.getSize(
-        new THREE.Vector2()
-    );
-    const width = renderer.domElement.clientWidth;
-    const height = renderer.domElement.clientHeight;
 
-    if (width !== currentWidth || height !== currentHeight) {
-        renderer.setSize(width, height, false);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-    }
-}
 
 const clock = new THREE.Clock;
 clock.start();
 
 function loop() {
     const dt = clock.getDelta();
-    updateRendererSize();
+    updateRendererSize(renderer, camera);
 
     controls.update(dt);
     gui.update(dt);

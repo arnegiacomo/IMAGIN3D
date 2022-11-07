@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "../libs/three.module.js";
+
 /**
  * Loads heightmap data from an image.
  * The image should be loaded before using this method.
@@ -37,4 +39,33 @@ export function getHeightmapData(image, size) {
   }
 
   return data;
+}
+
+/**
+ * Calculates the index in the 'position' attribute for a mesh, given x & y in uv-coords, and size of 'position' array
+ * @param x
+ * @param y
+ * @param size
+ * @returns {number}
+ */
+export function calculateVertexIndex(x, y, size) {
+  const xval = Math.round(x * size);
+  let yval = Math.round((1-y) * size * size);
+  const divs = Math.floor(yval / size);
+  yval = divs * size;
+  return xval + yval;
+}
+
+export function updateRendererSize(renderer, camera) {
+  const {x: currentWidth, y: currentHeight} = renderer.getSize(
+      new THREE.Vector2()
+  );
+  const width = renderer.domElement.clientWidth;
+  const height = renderer.domElement.clientHeight;
+
+  if (width !== currentWidth || height !== currentHeight) {
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
 }
