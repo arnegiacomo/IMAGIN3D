@@ -97,27 +97,40 @@ export default class Controls {
         if(!this.renderer.xr.isPresenting) {
             this.controls.update();
         } else {
+            // Only update VR controls when presenting in VR
             this.handleController1(dt);
             this.handleController2(dt);
 
+            // Get direction of ray/line from controller
             const direction = new THREE.Vector3();
             this.controller1.ray.getWorldDirection(direction);
+
+            // Inverse line to get correct direction
             direction.multiply(new Vector3(-1, -1, -1))
             const position = new THREE.Vector3();
             this.controller1.ray.getWorldPosition(position)
+
+            // Configure raycaster
             this.raycaster.set( position, direction);
 
+            // Get all objects intersected by ray from right controller
             const intersects = this.raycaster.intersectObjects( this.scene.children );
 
             for ( let i = 0; i < intersects.length; i ++ ) {
 
                 const obj = intersects[i].object;
                 if(obj instanceof THREE.Mesh) {
+
+                    // If object intersected is the terrain
                     if(intersects[i].object.isTerrain) {
                         obj.updateMatrixWorld();
+
+                        // Find intersect point
                         const point = intersects[i].uv;
+                        // Calculate corresponding vertex location from uv coords at intersect point
                         const idx = calculateVertexIndex(point.x, point.y, obj.size);
-                        console.log(obj.size);
+
+                        // Increment y value of vertex by delta time
                         obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
                         obj.geometry.attributes.position.needsUpdate = true;
                     }
