@@ -135,6 +135,7 @@ export default class Controls {
                         const idx = calculateVertexIndex(point.x, point.y, obj.size);
 
                         // Increment y value of vertex by delta time
+                        // TODO: Add brush size and brush strength. Also add inverse brush, preferably left hand
                         obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
                         obj.geometry.attributes.position.needsUpdate = true;
                     }
