@@ -22,7 +22,7 @@ export default class GUI {
 
     }
 
-    update() {
+    update(dt) {
         ThreeMeshUI.update();
     }
 

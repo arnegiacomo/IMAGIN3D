@@ -6,6 +6,8 @@ import TerrainGeometry from "./TerrainGeometry.js";
 
 export default class Terrain {
 
+    loaded = false;
+
     constructor(scene) {
         const terrainImage = new Image();
         terrainImage.onload = () => {
@@ -13,7 +15,7 @@ export default class Terrain {
             this.size = 128;
             this.height = 5;
 
-            this.geometry = new TerrainGeometry(20, 128, 5, terrainImage);
+            this.geometry = new TerrainGeometry(20, this.size, this.height, terrainImage);
 
             const grass = new THREE.TextureLoader().load('../../assets/images/grass.png');
             const rock = new THREE.TextureLoader().load('../../assets/images/rock.png');
@@ -38,13 +40,16 @@ export default class Terrain {
             this.mesh = new THREE.Mesh(this.geometry, this.material);
 
             scene.add(this.mesh);
-
+            this.loaded = true;
         };
         terrainImage.src = '../assets/images/terrain.png';
     }
 
     update(dt) {
+        if (!this.loaded) return;
 
+            this.mesh.geometry.attributes.position.setY(0, this.mesh.geometry.attributes.position.getY(0) + dt);
+            this.mesh.geometry.attributes.position.needsUpdate = true;
     }
 }
 

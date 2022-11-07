@@ -1,7 +1,7 @@
 "use strict";
 
 import * as THREE from "../libs/three.module.js";
-import { VRButton } from "../libs/webxr/VRButton.js";
+import {VRButton} from "../libs/webxr/VRButton.js";
 import {OBJLoader} from "../libs/OBJLoader.js";
 
 import TerrainGeometry from "./terrain/Terrain.js";
@@ -12,8 +12,8 @@ import GUI from './ui/GUI.js'
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
-  antialias: true,
+    canvas: canvas,
+    antialias: true,
 });
 
 const white = new THREE.Color(THREE.Color.NAMES.white);
@@ -51,51 +51,52 @@ loader.load(
     // resource URL
     '../assets/models/tree.obj',
     // called when resource is loaded
-    function ( object ) {
+    function (object) {
 
-      object.position.set( 0.5, 3.5, 0 );
-      scene.add( object );
+        object.position.set(0.5, 3.5, 0);
+        scene.add(object);
 
     },
     // called when loading is in progresses
-    function ( xhr ) {
+    function (xhr) {
 
-      console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
 
     },
     // called when loading has errors
-    function ( error ) {
+    function (error) {
 
-      console.log( 'An error happened' + error);
+        console.log('An error happened' + error);
 
     }
 );
 
 function updateRendererSize() {
-  const { x: currentWidth, y: currentHeight } = renderer.getSize(
-    new THREE.Vector2()
-  );
-  const width = renderer.domElement.clientWidth;
-  const height = renderer.domElement.clientHeight;
+    const {x: currentWidth, y: currentHeight} = renderer.getSize(
+        new THREE.Vector2()
+    );
+    const width = renderer.domElement.clientWidth;
+    const height = renderer.domElement.clientHeight;
 
-  if (width !== currentWidth || height !== currentHeight) {
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-  }
+    if (width !== currentWidth || height !== currentHeight) {
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
 }
 
 const clock = new THREE.Clock;
 clock.start();
 
 function loop() {
+    const dt = clock.getDelta();
+    updateRendererSize();
 
-  updateRendererSize();
+    controls.update(dt);
+    gui.update(dt);
+    terrain.update(dt);
 
-  controls.update(clock.getDelta());
-  gui.update();
-
-  renderer.render(scene, camera);
+    renderer.render(scene, camera);
 }
 
 document.body.append(VRButton.createButton(renderer))

@@ -1,20 +1,21 @@
 "use strict";
 
 import * as THREE from "../../libs/three.module.js";
-import { getHeightmapData } from "../utils.js";
+import {getHeightmapData} from "../utils.js";
 
-export default class TerrainGeometry extends THREE.PlaneGeometry{
-        constructor(size, resolution, height, image) {
-                super(size, size, resolution - 1, resolution - 1);
+export default class TerrainGeometry extends THREE.PlaneGeometry {
 
-                this.rotateX((Math.PI / 180) * -90);
+    constructor(size, resolution, height, image) {
+        super(size, size, resolution - 1, resolution - 1);
 
-                const data = getHeightmapData(image, resolution);
+        this.rotateX((Math.PI / 180) * -90);
 
-                for (let i = 0; i < data.length; i++) {
-                    this.attributes.position.setY(i, data[i] * height);
-                }
-            }
+        const data = getHeightmapData(image, resolution);
+
+        for (let i = 0; i < data.length; i++) {
+            this.attributes.position.setY(i, data[i] * height);
+        }
+    }
 }
 
 
