@@ -4,8 +4,7 @@ import * as THREE from "../libs/three.module.js";
 import { VRButton } from "../libs/webxr/VRButton.js";
 import {OBJLoader} from "../libs/OBJLoader.js";
 
-import TextureSplattingMaterial from "./materials/TextureSplattingMaterial.js";
-import TerrainGeometry from "./geometry/TerrainGeometry.js";
+import TerrainGeometry from "./terrain/Terrain.js";
 import SkyBox from "./objects/SkyBox.js";
 import LightSphere from "./objects/LightSphere.js";
 import Controls from "./ui/Controls.js";
@@ -36,41 +35,7 @@ scene.add(axesHelper);
 const sun = new THREE.DirectionalLight(white, 1.0);
 scene.add(sun);
 
-const terrainImage = new Image();
-terrainImage.onload = () => {
-
-  const size = 128;
-  const height = 5;
-
-  const geometry = new TerrainGeometry(20, 128, 5, terrainImage);
-
-  const grass = new THREE.TextureLoader().load('../assets/images/grass.png');
-  const rock = new THREE.TextureLoader().load('../assets/images/rock.png');
-  const alphaMap = new THREE.TextureLoader().load('../assets/images/terrain.png');
-
-  grass.wrapS = THREE.RepeatWrapping;
-  grass.wrapT = THREE.RepeatWrapping;
-
-  grass.repeat.multiplyScalar(size / 8);
-
-  rock.wrapS = THREE.RepeatWrapping;
-  rock.wrapT = THREE.RepeatWrapping;
-
-  rock.repeat.multiplyScalar(size / 8);
-
-  const material = new TextureSplattingMaterial({
-    color: THREE.Color.NAMES.white,
-    colorMaps: [grass, rock],
-    alphaMaps: [alphaMap]
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-
-  scene.add(mesh);
-
-};
-
-terrainImage.src = '../assets/images/terrain.png';
+const terrain = new TerrainGeometry(scene);
 
 // TODO: there three can be moved elsewhere
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
