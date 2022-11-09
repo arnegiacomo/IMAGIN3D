@@ -1,8 +1,8 @@
 "use strict";
 
 import * as THREE from "../../libs/three.module.js";
-import {XRControllerModelFactory} from '../../libs/webxr/XRControllerModelFactory.js';
-import {OrbitControls} from "../../libs/controls/OrbitControls.js";
+import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
+import { OrbitControls } from "../../libs/controls/OrbitControls.js";
 import {Vector3} from "../../libs/three.module.js";
 import {calculateVertexIndex} from "../utils.js";
 
@@ -16,7 +16,7 @@ export default class Controls {
         // Create camera
         this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
         // Create mousecontrols
-        this.controls = new OrbitControls(this.camera, renderer.domElement);
+        this.controls = new OrbitControls( this.camera, renderer.domElement );
 
         // Configure camera
         this.camera.position.z += 10;
@@ -33,39 +33,39 @@ export default class Controls {
         renderer.xr.enabled = true;
 
         // Get controllers
-        this.controller1 = renderer.xr.getController(0);
-        this.controller1.addEventListener('selectstart', onSelectStart);
-        this.controller1.addEventListener('selectend', onSelectEnd);
-        this.controller1.addEventListener('squeezestart', onSqueezeStart);
-        this.controller1.addEventListener('squeezeend', onSqueezeEnd);
-        this.controller1.addEventListener('connected', function (event) {
+        this.controller1 = renderer.xr.getController( 0 );
+        this.controller1.addEventListener( 'selectstart', onSelectStart );
+        this.controller1.addEventListener( 'selectend', onSelectEnd );
+        this.controller1.addEventListener( 'squeezestart', onSqueezeStart );
+        this.controller1.addEventListener( 'squeezeend', onSqueezeEnd );
+        this.controller1.addEventListener( 'connected', function ( event ) {
 
-            this.ray = buildController(event.data);
-            this.add(this.ray);
+            this.ray = buildController( event.data );
+            this.add( this.ray );
 
-        });
-        this.controller1.addEventListener('disconnected', function () {
+        } );
+        this.controller1.addEventListener( 'disconnected', function () {
 
-            this.remove(this.children[0]);
+            this.remove( this.children[ 0 ] );
 
-        });
+        } );
 
-        this.controller2 = renderer.xr.getController(1);
-        this.controller2.addEventListener('selectstart', onSelectStart);
-        this.controller2.addEventListener('selectend', onSelectEnd);
-        this.controller2.addEventListener('squeezestart', onSqueezeStart);
-        this.controller2.addEventListener('squeezeend', onSqueezeEnd);
-        this.controller2.addEventListener('connected', function (event) {
+        this.controller2 = renderer.xr.getController( 1 );
+        this.controller2.addEventListener( 'selectstart', onSelectStart );
+        this.controller2.addEventListener( 'selectend', onSelectEnd );
+        this.controller2.addEventListener( 'squeezestart', onSqueezeStart );
+        this.controller2.addEventListener( 'squeezeend', onSqueezeEnd );
+        this.controller2.addEventListener( 'connected', function ( event ) {
 
-            this.ray = buildController(event.data);
-            this.add(this.ray);
+            this.ray = buildController( event.data );
+            this.add( this.ray );
 
-        });
-        this.controller2.addEventListener('disconnected', function () {
+        } );
+        this.controller2.addEventListener( 'disconnected', function () {
 
-            this.remove(this.children[0]);
+            this.remove( this.children[ 0 ] );
 
-        });
+        } );
 
 
         // Create raycaster for picking
@@ -78,11 +78,11 @@ export default class Controls {
 
         const controllerModelFactory = new XRControllerModelFactory();
 
-        this.controllerGrip1 = renderer.xr.getControllerGrip(0);
-        this.controllerGrip1.add(controllerModelFactory.createControllerModel(this.controllerGrip1));
+        this.controllerGrip1 = renderer.xr.getControllerGrip( 0 );
+        this.controllerGrip1.add( controllerModelFactory.createControllerModel( this.controllerGrip1 ) );
 
-        this.controllerGrip2 = renderer.xr.getControllerGrip(1);
-        this.controllerGrip2.add(controllerModelFactory.createControllerModel(this.controllerGrip2));
+        this.controllerGrip2 = renderer.xr.getControllerGrip( 1 );
+        this.controllerGrip2.add( controllerModelFactory.createControllerModel( this.controllerGrip2 ) );
 
         // Dolly and camera for VR movement
         this.dolly = new THREE.Object3D();
@@ -98,7 +98,7 @@ export default class Controls {
 
     update(dt) {
 
-        if (!this.renderer.xr.isPresenting) {
+        if(!this.renderer.xr.isPresenting) {
             this.controls.update();
         } else {
             // Only update VR controls when presenting in VR
@@ -115,38 +115,41 @@ export default class Controls {
             this.controller1.ray.getWorldPosition(position)
 
             // Configure raycaster
-            this.raycaster.set(position, direction);
+            this.raycaster.set( position, direction);
 
             // Get all objects intersected by ray from right controller
-            const intersects = this.raycaster.intersectObjects(this.scene.children);
+            const intersects = this.raycaster.intersectObjects( this.scene.children );
 
-            const obj = intersects[0].object;
-            if (obj instanceof THREE.Mesh) {
+            for ( let i = 0; i < intersects.length; i ++ ) {
 
-                // If object intersected is the terrain
-                if (intersects[0].object.isTerrain) {
-                    obj.updateMatrixWorld();
+                const obj = intersects[i].object;
+                if(obj instanceof THREE.Mesh) {
 
-                    // Find intersect point
-                    const point = intersects[i].uv;
-                    // Calculate corresponding vertex location from uv coords at intersect point
-                    const idx = calculateVertexIndex(point.x, point.y, obj.size);
+                    // If object intersected is the terrain
+                    if(intersects[i].object.isTerrain) {
+                        obj.updateMatrixWorld();
 
-                    // Increment y value of vertex by delta time
-                    // TODO: Add brush size and brush strength. Also add inverse brush, preferably left hand
-                    obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
-                    obj.geometry.attributes.position.needsUpdate = true;
+                        // Find intersect point
+                        const point = intersects[i].uv;
+                        // Calculate corresponding vertex location from uv coords at intersect point
+                        const idx = calculateVertexIndex(point.x, point.y, obj.size);
+
+                        // Increment y value of vertex by delta time
+                        // TODO: Add brush size and brush strength. Also add inverse brush, preferably left hand
+                        obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
+                        obj.geometry.attributes.position.needsUpdate = true;
+                    }
+
                 }
-
             }
         }
 
 
     }
 
-    handleController1(dt) {
+    handleController1( dt ) {
 
-        if (this.controller1.userData.isSelecting) {
+        if ( this.controller1.userData.isSelecting ) {
 
         }
 
@@ -157,14 +160,14 @@ export default class Controls {
             this.camera.getWorldQuaternion(this.dolly.quaternion);
             this.dolly.translateZ(-dt * speed);
             this.dolly.position.y = 0;
-            this.dolly.quaternion.copy(quaternion);
+            this.dolly.quaternion.copy( quaternion );
         }
 
     }
 
-    handleController2(dt) {
+    handleController2( dt ) {
 
-        if (this.controller2.userData.isSelecting) {
+        if ( this.controller2.userData.isSelecting ) {
 
         }
 
@@ -175,33 +178,33 @@ export default class Controls {
             this.camera.getWorldQuaternion(this.dolly.quaternion);
             this.dolly.translateZ(-dt * speed);
             this.dolly.position.y = 0;
-            this.dolly.quaternion.copy(quaternion);
+            this.dolly.quaternion.copy( quaternion );
         }
 
     }
 }
 
-function buildController(data) {
+function buildController( data ) {
 
     let geometry, material;
 
-    switch (data.targetRayMode) {
+    switch ( data.targetRayMode ) {
 
         case 'tracked-pointer':
 
             geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, -1], 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute([0.5, 0.5, 0.5, 0, 0, 0], 3));
+            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
+            geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
 
-            material = new THREE.LineBasicMaterial({vertexColors: true, blending: THREE.AdditiveBlending});
+            material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
 
-            return new THREE.Line(geometry, material);
+            return new THREE.Line( geometry, material );
 
         case 'gaze':
 
-            geometry = new THREE.RingGeometry(0.02, 0.04, 32).translate(0, 0, -1);
-            material = new THREE.MeshBasicMaterial({opacity: 0.5, transparent: true});
-            return new THREE.Mesh(geometry, material);
+            geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
+            material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
+            return new THREE.Mesh( geometry, material );
 
     }
 
