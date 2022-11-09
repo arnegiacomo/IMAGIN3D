@@ -150,6 +150,11 @@ export default class Controls {
     handleController1( dt ) {
 
         if ( this.controller1.userData.isSelecting ) {
+
+        }
+
+        // If right controller squeeze; move forwards
+        if (this.controller1.userData.isSqueezing) {
             const speed = 2;
             const quaternion = this.dolly.quaternion.clone();
             this.camera.getWorldQuaternion(this.dolly.quaternion);
@@ -158,25 +163,22 @@ export default class Controls {
             this.dolly.quaternion.copy( quaternion );
         }
 
-        if (this.controller1.userData.isSqueezing) {
-            console.log("Controller 1 is squeezing!");
-        }
-
     }
 
     handleController2( dt ) {
 
         if ( this.controller2.userData.isSelecting ) {
+
+        }
+
+        // If left controller squeeze; move backwards
+        if (this.controller2.userData.isSqueezing) {
             const speed = -2;
             const quaternion = this.dolly.quaternion.clone();
             this.camera.getWorldQuaternion(this.dolly.quaternion);
             this.dolly.translateZ(-dt * speed);
             this.dolly.position.y = 0;
             this.dolly.quaternion.copy( quaternion );
-        }
-
-        if (this.controller2.userData.isSqueezing) {
-            console.log("Controller 2 is squeezing!");
         }
 
     }
