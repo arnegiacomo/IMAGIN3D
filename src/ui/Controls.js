@@ -4,7 +4,7 @@ import * as THREE from "../../libs/three.module.js";
 import { XRControllerModelFactory } from '../../libs/webxr/XRControllerModelFactory.js';
 import { OrbitControls } from "../../libs/controls/OrbitControls.js";
 import {Vector3} from "../../libs/three.module.js";
-import {calculateVertexIndex} from "../utils.js";
+import {terrainBrush} from "../utils.js";
 
 // This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
@@ -68,8 +68,11 @@ export default class Controls {
         } );
 
 
-        // Create raycaster for picking
-        this.raycaster = new THREE.Raycaster();
+        // Create right raycaster for picking / terrain editing
+        this.controller1.raycaster = new THREE.Raycaster();
+
+        // Create left raycaster for picking / terrain editing
+        this.controller2.raycaster = new THREE.Raycaster();
 
         // The XRControllerModelFactory will automatically fetch controller models
         // that match what the user is holding as closely as possible. The models
@@ -94,6 +97,13 @@ export default class Controls {
         this.dolly.add(this.controllerGrip1);
         this.dolly.add(this.controllerGrip2);
 
+
+        // Configure (terrain) brush properties of controllers
+        this.controller1.brushSize = 5;
+        this.controller1.brushStrength = 0.1;
+        this.controller2.brushSize = 3;
+        this.controller2.brushStrength = -0.1;
+
     }
 
     update(dt) {
@@ -104,44 +114,6 @@ export default class Controls {
             // Only update VR controls when presenting in VR
             this.handleController1(dt);
             this.handleController2(dt);
-
-            // Get direction of ray/line from controller
-            const direction = new THREE.Vector3();
-            this.controller1.ray.getWorldDirection(direction);
-
-            // Inverse line to get correct direction
-            direction.multiply(new Vector3(-1, -1, -1))
-            const position = new THREE.Vector3();
-            this.controller1.ray.getWorldPosition(position)
-
-            // Configure raycaster
-            this.raycaster.set( position, direction);
-
-            // Get all objects intersected by ray from right controller
-            const intersects = this.raycaster.intersectObjects( this.scene.children );
-
-            for ( let i = 0; i < intersects.length; i ++ ) {
-
-                const obj = intersects[i].object;
-                if(obj instanceof THREE.Mesh) {
-
-                    // If object intersected is the terrain
-                    if(intersects[i].object.isTerrain) {
-                        obj.updateMatrixWorld();
-
-                        // Find intersect point
-                        const point = intersects[i].uv;
-                        // Calculate corresponding vertex location from uv coords at intersect point
-                        const idx = calculateVertexIndex(point.x, point.y, obj.size);
-
-                        // Increment y value of vertex by delta time
-                        // TODO: Add brush size and brush strength. Also add inverse brush, preferably left hand
-                        obj.geometry.attributes.position.setY(idx, obj.geometry.attributes.position.getY(idx) + dt);
-                        obj.geometry.attributes.position.needsUpdate = true;
-                    }
-
-                }
-            }
         }
 
 
@@ -149,38 +121,73 @@ export default class Controls {
 
     handleController1( dt ) {
 
+        // If right controller selects, increase terrain height
         if ( this.controller1.userData.isSelecting ) {
-
+            this.handleRaycast (this.controller1, dt);
         }
 
         // If right controller squeeze; move forwards
         if (this.controller1.userData.isSqueezing) {
-            const speed = 2;
-            const quaternion = this.dolly.quaternion.clone();
-            this.camera.getWorldQuaternion(this.dolly.quaternion);
-            this.dolly.translateZ(-dt * speed);
-            this.dolly.position.y = 0;
-            this.dolly.quaternion.copy( quaternion );
+            this.movedolly(2, dt);
         }
 
     }
 
     handleController2( dt ) {
 
+        // If left controller selects, decrease terrain height
         if ( this.controller2.userData.isSelecting ) {
-
+            this.handleRaycast (this.controller2, dt);
         }
 
         // If left controller squeeze; move backwards
         if (this.controller2.userData.isSqueezing) {
-            const speed = -2;
-            const quaternion = this.dolly.quaternion.clone();
-            this.camera.getWorldQuaternion(this.dolly.quaternion);
-            this.dolly.translateZ(-dt * speed);
-            this.dolly.position.y = 0;
-            this.dolly.quaternion.copy( quaternion );
+            this.movedolly(-2, dt);
         }
 
+    }
+
+    handleRaycast (controller, dt) {
+        // Get direction of ray/line from controller
+        const direction = new THREE.Vector3();
+        controller.ray.getWorldDirection(direction);
+
+        // Inverse line to get correct direction
+        direction.multiply(new Vector3(-1, -1, -1))
+        const position = new THREE.Vector3();
+        controller.ray.getWorldPosition(position)
+
+        // Configure raycaster
+        controller.raycaster.set( position, direction);
+
+        // Get all objects intersected by ray from controller
+        const intersects1 = controller.raycaster.intersectObjects( this.scene.children );
+
+        for ( let i = 0; i < intersects1.length; i ++ ) {
+
+            const obj = intersects1[i].object;
+            if(obj instanceof THREE.Mesh) {
+
+                // If object intersected is the terrain
+                if(intersects1[i].object.isTerrain) {
+                    obj.updateMatrixWorld();
+
+                    // Find intersect point
+                    const point = intersects1[i].uv;
+
+                    terrainBrush(point, controller.brushSize, controller.brushStrength, dt, obj);
+                }
+
+            }
+        }
+    }
+
+    movedolly(speed, dt) {
+        const quaternion = this.dolly.quaternion.clone();
+        this.camera.getWorldQuaternion(this.dolly.quaternion);
+        this.dolly.translateZ(-dt * speed);
+        this.dolly.position.y = 0;
+        this.dolly.quaternion.copy( quaternion );
     }
 }
 

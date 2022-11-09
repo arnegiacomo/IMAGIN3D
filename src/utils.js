@@ -69,3 +69,52 @@ export function updateRendererSize(renderer, camera) {
     camera.updateProjectionMatrix();
   }
 }
+
+/**
+ * Changes the terrain/mesh at a given point, positive strength increases y-value/height, negative decreases.
+ *
+ * @param point Intersect point / uv coords of where to change terrain height
+ * @param size Size of "brush", amount of vertices to increase value of from point // TODO: implement this?
+ * @param strength Brush strength, positive increases terrain height, negative decreases
+ * @param dt DT from update loop
+ * @param mesh Mesh to be brushed
+ */
+export function terrainBrush(point, size, strength, dt, mesh) {
+  // Calculate corresponding vertex location from uv coords at intersect point
+  const idx = calculateVertexIndex(point.x, point.y, mesh.size);
+
+  // for (let i = 0; i < size; i++) {
+  //   mesh.geometry.attributes.position.setY(idx+i, mesh.geometry.attributes.position.getY(idx+i) + dt * strength);
+  //   mesh.geometry.attributes.position.setY(idx-i, mesh.geometry.attributes.position.getY(idx-i) + dt * strength);
+  //   mesh.geometry.attributes.position.setY(idx-(mesh.size*i), mesh.geometry.attributes.position.getY(idx-(mesh.size*i)) + dt * strength);
+  //   mesh.geometry.attributes.position.setY(idx+(mesh.size*i), mesh.geometry.attributes.position.getY(idx+(mesh.size*i)) + dt * strength);
+  // }
+
+  // TODO: Has constant brush size of 3. Fix this? Tip: recursion or clever algorithm
+  // Size 1
+  mesh.geometry.attributes.position.setY(idx, mesh.geometry.attributes.position.getY(idx) + dt * strength);
+
+  // Size 2
+  mesh.geometry.attributes.position.setY(idx, mesh.geometry.attributes.position.getY(idx) + dt * strength);
+  if (idx >= 1) mesh.geometry.attributes.position.setY(idx-1, mesh.geometry.attributes.position.getY(idx-1) + dt * strength);
+  if (idx < mesh.size*mesh.size) mesh.geometry.attributes.position.setY(idx+1, mesh.geometry.attributes.position.getY(idx+1) + dt * strength);
+  if (idx >= 128) mesh.geometry.attributes.position.setY(idx-128, mesh.geometry.attributes.position.getY(idx-128) + dt * strength);
+  if (idx <= mesh.size*mesh.size - 128) mesh.geometry.attributes.position.setY(idx+128, mesh.geometry.attributes.position.getY(idx+128) + dt * strength);
+
+  // Size 3
+  mesh.geometry.attributes.position.setY(idx, mesh.geometry.attributes.position.getY(idx) + dt * strength);
+  if (idx >= 1) mesh.geometry.attributes.position.setY(idx-1, mesh.geometry.attributes.position.getY(idx-1) + dt * strength);
+  if (idx >= 2) mesh.geometry.attributes.position.setY(idx-2, mesh.geometry.attributes.position.getY(idx-2) + dt * strength);
+  if (idx < mesh.size*mesh.size) mesh.geometry.attributes.position.setY(idx+1, mesh.geometry.attributes.position.getY(idx+1) + dt * strength);
+  if (idx < mesh.size*mesh.size-1) mesh.geometry.attributes.position.setY(idx+2, mesh.geometry.attributes.position.getY(idx+2) + dt * strength);
+  if (idx >= 127) mesh.geometry.attributes.position.setY(idx-127, mesh.geometry.attributes.position.getY(idx-127) + dt * strength);
+  if (idx >= 128) mesh.geometry.attributes.position.setY(idx-128, mesh.geometry.attributes.position.getY(idx-128) + dt * strength);
+  if (idx >= 129) mesh.geometry.attributes.position.setY(idx-129, mesh.geometry.attributes.position.getY(idx-129) + dt * strength);
+  if (idx >= 256) mesh.geometry.attributes.position.setY(idx-256, mesh.geometry.attributes.position.getY(idx-256) + dt * strength);
+  if (idx <= mesh.size*mesh.size - 127) mesh.geometry.attributes.position.setY(idx+127, mesh.geometry.attributes.position.getY(idx+127) + dt * strength);
+  if (idx <= mesh.size*mesh.size - 128) mesh.geometry.attributes.position.setY(idx+128, mesh.geometry.attributes.position.getY(idx+128) + dt * strength);
+  if (idx <= mesh.size*mesh.size - 129) mesh.geometry.attributes.position.setY(idx+129, mesh.geometry.attributes.position.getY(idx+129) + dt * strength);
+  if (idx <= mesh.size*mesh.size - 256) mesh.geometry.attributes.position.setY(idx+256, mesh.geometry.attributes.position.getY(idx+256) + dt * strength);
+
+  mesh.geometry.attributes.position.needsUpdate = true;
+}
