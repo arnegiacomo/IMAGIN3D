@@ -1,7 +1,7 @@
 "use strict";
 
-import * as THREE from "../../libs/three.module.js";
-import TextureSplattingMaterial from "../materials/TextureSplattingMaterial.js";
+import * as THREE from "../../../libs/three.module.js";
+import TextureSplattingMaterial from "../../materials/TextureSplattingMaterial.js";
 import TerrainGeometry from "./TerrainGeometry.js";
 
 export default class Terrain {
@@ -49,6 +49,9 @@ export default class Terrain {
 
     update(dt) {
 
+        if (this.loaded) {
+           // TODO: update texture after change in mesh?
+        }
 
     }
 
