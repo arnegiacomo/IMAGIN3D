@@ -4,12 +4,14 @@ import * as THREE from "../libs/three.module.js";
 import {VRButton} from "../libs/webxr/VRButton.js";
 import {OBJLoader} from "../libs/OBJLoader.js";
 
-import TerrainGeometry from "./terrain/Terrain.js";
-import SkyBox from "./objects/SkyBox.js";
-import LightSphere from "./objects/LightSphere.js";
+import TerrainGeometry from "./scene/terrain/Terrain.js";
+import SkyBox from "./scene/objects/SkyBox.js";
+import LightSphere from "./scene/objects/LightSphere.js";
 import Controls from "./ui/Controls.js";
 import GUI from './ui/GUI.js'
 import {updateRendererSize} from "./utils.js";
+import Ocean from "./scene/water/Ocean.js";
+import Fog from "./scene/fog/Fog.js";
 
 
 const canvas = document.querySelector("canvas");
@@ -18,16 +20,18 @@ const renderer = new THREE.WebGLRenderer({
     antialias: true,
 });
 
+// Set clear color
 const white = new THREE.Color(THREE.Color.NAMES.white);
 renderer.setClearColor(white, 1.0);
 
+// Create scene // TODO: custom scene init
 const scene = new THREE.Scene();
 
+// Create controls and gui
 const controls = new Controls(scene, renderer);
 const camera = controls.camera;
 const gui = new GUI(scene);
 
-// TODO: Move scene creation and management elsewhere
 const skybox = new SkyBox();
 scene.background = skybox.images;
 
@@ -38,6 +42,10 @@ const sun = new THREE.DirectionalLight(white, 1.0);
 scene.add(sun);
 
 const terrain = new TerrainGeometry(scene);
+
+const ocean = new Ocean(scene);
+
+const fog = new Fog(scene);
 
 // TODO: there three can be moved elsewhere
 scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
@@ -84,7 +92,9 @@ function loop() {
 
     controls.update(dt);
     gui.update(dt);
+
     terrain.update(dt);
+    ocean.update(dt);
 
     renderer.render(scene, camera);
 }
