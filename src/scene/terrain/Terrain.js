@@ -62,7 +62,7 @@ export default class Terrain {
 
                     const sprite = new THREE.Sprite( material );
 
-                    sprite.scale.set(0.25, 0.25, 0.25)
+                    sprite.scale.set(0.6, 0.4, 0.4)
                     let y = this.mesh.geometry.data[i*this.size + j];
                     sprite.translateX((j /this.size)*this.heightwidth  - this.heightwidth/2)
                     sprite.translateZ((i /this.size)*this.heightwidth- this.heightwidth/2)
