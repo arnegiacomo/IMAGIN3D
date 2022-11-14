@@ -9,6 +9,8 @@ import {terrainBrush} from "../utils.js";
 // This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
 
+    loaded = false;
+
     constructor(scene, renderer) {
         this.scene = scene;
         this.renderer = renderer;
@@ -111,6 +113,10 @@ export default class Controls {
         if(!this.renderer.xr.isPresenting) {
             this.controls.update();
         } else {
+            if(!this.loaded) {
+                this.dolly.position.y = 5;
+                this.loaded = true;
+            }
             // Only update VR controls when presenting in VR
             this.handleController1(dt);
             this.handleController2(dt);
@@ -186,7 +192,6 @@ export default class Controls {
         const quaternion = this.dolly.quaternion.clone();
         this.camera.getWorldQuaternion(this.dolly.quaternion);
         this.dolly.translateZ(-dt * speed);
-        this.dolly.position.y = 0;
         this.dolly.quaternion.copy( quaternion );
     }
 }

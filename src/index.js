@@ -75,7 +75,8 @@ loader.load(
     function (object) {
 
         object.position.set(0.5, 3.5, 0);
-        // TODO CAST SHADOW
+        object.mesh.castShadow = true;
+        object.mesh.receiveShadow = false;
         scene.add(object);
 
     },
