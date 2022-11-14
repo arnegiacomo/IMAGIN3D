@@ -31,13 +31,18 @@ const scene = new THREE.Scene();
 const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
 light.position.set( 0, 100, 0 ); //default; light shining from top
 light.castShadow = true; // default false
+var side = 10;
+light.shadow.camera.top = side;
+light.shadow.camera.bottom = -side;
+light.shadow.camera.left = side;
+light.shadow.camera.right = -side;
 scene.add( light );
 
 //Set up shadow properties for the light
-light.shadow.mapSize.width = 512; // default
-light.shadow.mapSize.height = 512; // default
-light.shadow.camera.near = 0.5; // default
-light.shadow.camera.far = 500; // default
+light.shadow.mapSize.width = 1024;
+light.shadow.mapSize.height = 1024;
+light.shadow.camera.near = 0.1;
+light.shadow.camera.far = 1000;
 
 // Create controls and gui
 const controls = new Controls(scene, renderer);
