@@ -30,7 +30,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 const scene = new THREE.Scene();
 
 // Add sunlight
-const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
 light.position.set( 0, 100, 0 ); //default; light shining from top
 light.castShadow = true; // default false
 scene.add( light );
@@ -40,10 +40,6 @@ light.shadow.mapSize.width = 512; // default
 light.shadow.mapSize.height = 512; // default
 light.shadow.camera.near = 0.5; // default
 light.shadow.camera.far = 500; // default
-
-//Create a helper for the shadow camera (optional)
-const helper = new THREE.CameraHelper( light.shadow.camera );
-scene.add( helper );
 
 // Create controls and gui
 const controls = new Controls(scene, renderer);
@@ -55,9 +51,6 @@ scene.background = skybox.images;
 
 const axesHelper = new THREE.AxesHelper(1);
 scene.add(axesHelper);
-
-const sun = new THREE.DirectionalLight(white, 1.0);
-scene.add(sun);
 
 const terrain = new TerrainGeometry(scene);
 
