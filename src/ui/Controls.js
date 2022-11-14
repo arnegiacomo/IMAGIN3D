@@ -72,9 +72,11 @@ export default class Controls {
 
         // Create right raycaster for picking / terrain editing
         this.controller1.raycaster = new THREE.Raycaster();
+        this.controller1.raycaster.camera = this.camera;
 
         // Create left raycaster for picking / terrain editing
         this.controller2.raycaster = new THREE.Raycaster();
+        this.controller2.raycaster.camera = this.camera;
 
         // The XRControllerModelFactory will automatically fetch controller models
         // that match what the user is holding as closely as possible. The models

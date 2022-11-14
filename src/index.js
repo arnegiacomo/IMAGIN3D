@@ -11,7 +11,6 @@ import GUI from './ui/GUI.js'
 import {updateRendererSize} from "./utils.js";
 import Ocean from "./scene/water/Ocean.js";
 import Fog from "./scene/fog/Fog.js";
-import ObjectLoader from "./ObjectLoader.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -61,10 +60,6 @@ const fog = new Fog(scene);
 // scene.add(new LightSphere(0.25, THREE.Color.NAMES.white, 1, 10, 3, 5, 3));
 // scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
 // scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
-
-// Load all objects into scene
-const loader = new ObjectLoader();
-loader.init(scene);
 
 const clock = new THREE.Clock;
 clock.start();
