@@ -76,20 +76,36 @@ export default class Terrain {
                 }
             }
 
+            // Load all objects into scene
+            const loader = new ObjectLoader();
+            this.trees = loader.init(this.mesh);
+
+            this.loaded = true;
+
         };
         terrainImage.src = '../assets/images/terrain.png';
 
-        // Load all objects into scene
-        const loader = new ObjectLoader();
-        loader.init(scene);
+
     }
+
+    num = 0;
 
     update(dt) {
 
-        if (this.loaded) {
-           // TODO: update texture after change in mesh?
-        }
+        if(!this.loaded) return;
 
+        for(let i = 0; i < this.trees.length; i++) {
+            const tree = this.trees[i];
+            if(tree === undefined) return;
+            for(let i = 0; i < tree.children.length; i++) {
+                const leaf = tree.children[i];
+
+                leaf.material.rotation += dt * Math.sin(this.num) / 100;
+                this.num += dt;
+                leaf.material.needsUpdate = true;
+            }
+
+        }
     }
 
 }
