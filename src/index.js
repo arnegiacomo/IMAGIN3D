@@ -23,9 +23,27 @@ const renderer = new THREE.WebGLRenderer({
 // Set clear color
 const white = new THREE.Color(THREE.Color.NAMES.white);
 renderer.setClearColor(white, 1.0);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
 // Create scene // TODO: custom scene init
 const scene = new THREE.Scene();
+
+// Add sunlight
+const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+light.position.set( 0, 100, 0 ); //default; light shining from top
+light.castShadow = true; // default false
+scene.add( light );
+
+//Set up shadow properties for the light
+light.shadow.mapSize.width = 512; // default
+light.shadow.mapSize.height = 512; // default
+light.shadow.camera.near = 0.5; // default
+light.shadow.camera.far = 500; // default
+
+//Create a helper for the shadow camera (optional)
+const helper = new THREE.CameraHelper( light.shadow.camera );
+scene.add( helper );
 
 // Create controls and gui
 const controls = new Controls(scene, renderer);
@@ -64,6 +82,7 @@ loader.load(
     function (object) {
 
         object.position.set(0.5, 3.5, 0);
+        // TODO CAST SHADOW
         scene.add(object);
 
     },
@@ -80,7 +99,6 @@ loader.load(
 
     }
 );
-
 
 
 const clock = new THREE.Clock;
