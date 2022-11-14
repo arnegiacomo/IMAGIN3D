@@ -124,11 +124,7 @@ export function terrainBrush(point, size, strength, dt, mesh) {
   const grass = mesh.grassArray[grassidx];
   grass.translateY(dt*strength);
 
-  if(grass.position.y < 0.2) {
-    grass.visible = false;
-  } else {
-    grass.visible = true;
-  }
+  grass.visible = !(grass.position.y < 0.2 || grass.position.y > 3);
 
 }
 

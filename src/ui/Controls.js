@@ -168,25 +168,39 @@ export default class Controls {
         // Configure raycaster
         controller.raycaster.set( position, direction);
 
-        // Get all objects intersected by ray from controller
-        const intersects1 = controller.raycaster.intersectObjects( this.scene.children );
+        // Get all objects intersected by ray from controllerz
+        const intersects1 = controller.raycaster.intersectObjects( this.scene.children , true);
 
         for ( let i = 0; i < intersects1.length; i ++ ) {
 
             const obj = intersects1[i].object;
             if(obj instanceof THREE.Mesh) {
 
+                if (obj.isOcean) continue;
+
                 // If object intersected is the terrain
-                if(intersects1[i].object.isTerrain) {
+                if(obj.isTerrain) {
                     obj.updateMatrixWorld();
 
                     // Find intersect point
                     const point = intersects1[i].uv;
 
                     terrainBrush(point, controller.brushSize, controller.brushStrength, dt, obj);
+                    continue;
+                }
+
+                // If object intersected is a tree
+                if(obj.isTree) {
+                    obj.translateY(dt * controller.brushStrength);
+
+                    continue;
                 }
 
             }
+
+
+
+
         }
     }
 

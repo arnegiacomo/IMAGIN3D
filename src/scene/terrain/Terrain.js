@@ -69,11 +69,7 @@ export default class Terrain {
                     sprite.translateY(y * this.height + 0.1);
                     this.mesh.add( sprite );
 
-                    if(sprite.position.y < 0.2) {
-                        sprite.visible = false;
-                    } else {
-                        sprite.visible = true;
-                    }
+                    sprite.visible = !(sprite.position.y < 0.2 || sprite.position.y > 3);
 
                     this.mesh.grassArray[index] = sprite;
                     index ++;

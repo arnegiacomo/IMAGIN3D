@@ -36,15 +36,16 @@ export default class ObjectLoader {
         // load a resource
         loader.load(
             // resource URL
-            '../assets/models/Lowpoly_tree_sample.obj',
+            '../assets/models/tree.obj',
             // called when resource is loaded
             function (object) {
 
-                object.mesh.material =  new THREE.MeshStandardMaterial( { color: THREE.Color.NAMES.green } );
+                object.mesh.material =  new THREE.MeshPhongMaterial( { color: THREE.Color.NAMES.sandybrown, side: THREE.DoubleSide } );
                 object.position.set(0.5, 3.5, 0);
+                object.scale.set(1.5, 1.5, 1.5);
                 object.mesh.castShadow = true;
                 object.mesh.receiveShadow = false;
-                object.scale.set(0.05, 0.05, 0.05);
+                object.mesh.isTree = true;
                 scene.add(object);
 
             },
