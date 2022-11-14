@@ -9,7 +9,7 @@ export default class GUI {
 
         // TODO: VR gui using https://github.com/felixmariotto/three-mesh-ui
 
-        this.makeTextPanel();
+        // this.makeTextPanel();
 
         // TODO: Non-VR gui using https://sbcode.net/threejs/dat-gui/
 

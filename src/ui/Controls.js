@@ -99,9 +99,9 @@ export default class Controls {
 
 
         // Configure (terrain) brush properties of controllers
-        this.controller1.brushSize = 5;
+        this.controller1.brushSize = 5; // TODO
         this.controller1.brushStrength = 0.1;
-        this.controller2.brushSize = 3;
+        this.controller2.brushSize = 3; // TODO
         this.controller2.brushStrength = -0.1;
 
     }
@@ -153,7 +153,7 @@ export default class Controls {
         controller.ray.getWorldDirection(direction);
 
         // Inverse line to get correct direction
-        direction.multiply(new Vector3(-1, -1, -1))
+        direction.multiply(new Vector3(-1, -1, -1));
         const position = new THREE.Vector3();
         controller.ray.getWorldPosition(position)
 
