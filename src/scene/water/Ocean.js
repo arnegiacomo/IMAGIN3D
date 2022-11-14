@@ -27,6 +27,7 @@ export default class Ocean {
                 fog: scene.fog !== undefined
             }
         );
+        this.water.isOcean = true;
 
         this.water.rotation.x = - Math.PI / 2;
         this.water.position.y += 0.1;

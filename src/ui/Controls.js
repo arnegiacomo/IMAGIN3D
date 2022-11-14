@@ -9,6 +9,8 @@ import {terrainBrush} from "../utils.js";
 // This class has ownership over camera (vr and non-vr, non-vr controls and vr-controls)
 export default class Controls {
 
+    loaded = false;
+
     constructor(scene, renderer) {
         this.scene = scene;
         this.renderer = renderer;
@@ -70,9 +72,11 @@ export default class Controls {
 
         // Create right raycaster for picking / terrain editing
         this.controller1.raycaster = new THREE.Raycaster();
+        this.controller1.raycaster.camera = this.camera;
 
         // Create left raycaster for picking / terrain editing
         this.controller2.raycaster = new THREE.Raycaster();
+        this.controller2.raycaster.camera = this.camera;
 
         // The XRControllerModelFactory will automatically fetch controller models
         // that match what the user is holding as closely as possible. The models
@@ -99,9 +103,9 @@ export default class Controls {
 
 
         // Configure (terrain) brush properties of controllers
-        this.controller1.brushSize = 5;
+        this.controller1.brushSize = 5; // TODO
         this.controller1.brushStrength = 0.1;
-        this.controller2.brushSize = 3;
+        this.controller2.brushSize = 3; // TODO
         this.controller2.brushStrength = -0.1;
 
     }
@@ -111,6 +115,10 @@ export default class Controls {
         if(!this.renderer.xr.isPresenting) {
             this.controls.update();
         } else {
+            if(!this.loaded) {
+                this.dolly.position.y = 5;
+                this.loaded = true;
+            }
             // Only update VR controls when presenting in VR
             this.handleController1(dt);
             this.handleController2(dt);
@@ -153,32 +161,46 @@ export default class Controls {
         controller.ray.getWorldDirection(direction);
 
         // Inverse line to get correct direction
-        direction.multiply(new Vector3(-1, -1, -1))
+        direction.multiply(new Vector3(-1, -1, -1));
         const position = new THREE.Vector3();
         controller.ray.getWorldPosition(position)
 
         // Configure raycaster
         controller.raycaster.set( position, direction);
 
-        // Get all objects intersected by ray from controller
-        const intersects1 = controller.raycaster.intersectObjects( this.scene.children );
+        // Get all objects intersected by ray from controllerz
+        const intersects1 = controller.raycaster.intersectObjects( this.scene.children , true);
 
         for ( let i = 0; i < intersects1.length; i ++ ) {
 
             const obj = intersects1[i].object;
             if(obj instanceof THREE.Mesh) {
 
+                if (obj.isOcean) continue;
+
                 // If object intersected is the terrain
-                if(intersects1[i].object.isTerrain) {
+                if(obj.isTerrain) {
                     obj.updateMatrixWorld();
 
                     // Find intersect point
                     const point = intersects1[i].uv;
 
                     terrainBrush(point, controller.brushSize, controller.brushStrength, dt, obj);
+                    continue;
+                }
+
+                // If object intersected is a tree
+                if(obj.isTree) {
+                    obj.translateY(dt * controller.brushStrength);
+
+                    continue;
                 }
 
             }
+
+
+
+
         }
     }
 
@@ -186,7 +208,6 @@ export default class Controls {
         const quaternion = this.dolly.quaternion.clone();
         this.camera.getWorldQuaternion(this.dolly.quaternion);
         this.dolly.translateZ(-dt * speed);
-        this.dolly.position.y = 0;
         this.dolly.quaternion.copy( quaternion );
     }
 }

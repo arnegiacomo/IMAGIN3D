@@ -118,4 +118,20 @@ export function terrainBrush(point, size, strength, dt, mesh) {
   if (idx <= mesh.size*mesh.size - 256) mesh.geometry.attributes.position.setY(idx+256, mesh.geometry.attributes.position.getY(idx+256) + dt * strength);
 
   mesh.geometry.attributes.position.needsUpdate = true;
+
+  // Update grass closest to mesh point
+  const grassidx = calculateGrassIndex(point.x, point.y, mesh.grassSize);
+  const grass = mesh.grassArray[grassidx];
+  grass.translateY(dt*strength);
+
+  grass.visible = !(grass.position.y < 0.2 || grass.position.y > 3);
+
+}
+
+export function calculateGrassIndex(x, y, size) {
+  const xval = Math.round(x * size);
+  let yval = Math.round( (1-y) * size * size);
+  const divs = Math.floor(yval / size);
+  yval = divs * size;
+  return xval + yval;
 }

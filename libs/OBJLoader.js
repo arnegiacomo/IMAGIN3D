@@ -865,7 +865,7 @@ class OBJLoader extends Loader {
 				}
 
 				mesh.name = object.name;
-
+				container.mesh = mesh;
 				container.add( mesh );
 
 			}
