@@ -2,7 +2,6 @@
 
 import * as THREE from "../libs/three.module.js";
 import {VRButton} from "../libs/webxr/VRButton.js";
-import {OBJLoader} from "../libs/OBJLoader.js";
 
 import TerrainGeometry from "./scene/terrain/Terrain.js";
 import SkyBox from "./scene/objects/SkyBox.js";
@@ -12,7 +11,7 @@ import GUI from './ui/GUI.js'
 import {updateRendererSize} from "./utils.js";
 import Ocean from "./scene/water/Ocean.js";
 import Fog from "./scene/fog/Fog.js";
-
+import ObjectLoader from "./ObjectLoader.js";
 
 const canvas = document.querySelector("canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -63,37 +62,9 @@ const fog = new Fog(scene);
 // scene.add(new LightSphere(0.25, THREE.Color.NAMES.red, 5, 15, -3, 2, -3));
 // scene.add(new LightSphere(0.25, THREE.Color.NAMES.blue, 10, 3, 4.75, 2, -3));
 
-// TODO: Move object/model loading elsewhere
-// instantiate a loader
-const loader = new OBJLoader();
-
-// load a resource
-loader.load(
-    // resource URL
-    '../assets/models/tree.obj',
-    // called when resource is loaded
-    function (object) {
-
-        object.position.set(0.5, 3.5, 0);
-        object.mesh.castShadow = true;
-        object.mesh.receiveShadow = false;
-        scene.add(object);
-
-    },
-    // called when loading is in progresses
-    function (xhr) {
-
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-
-    },
-    // called when loading has errors
-    function (error) {
-
-        console.log('An error happened' + error);
-
-    }
-);
-
+// Load all objects into scene
+const loader = new ObjectLoader();
+loader.init(scene);
 
 const clock = new THREE.Clock;
 clock.start();
